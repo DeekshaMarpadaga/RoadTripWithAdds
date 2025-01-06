@@ -6,50 +6,42 @@
   </div>
 </header>
 
-<style>
-  .btn-green{
-    background-color: #2ecc71 ;
-  }
-  .completed {
-    background-color: rgba(46, 204, 113, 0.8);
-    text-decoration: line-through;
-  }
-
-</style>
-
-  <div class="container mt-5">
-    <table class="table">
-      <thead>
-          <tr>
-              <th>ID</th>
-              <th>Start</th>
-              <th>Stop</th>
-              <th>End</th>
-              <th>Distance</th>
-              <th>Duration</th>
-              <th>Action</th>
-          </tr>
-      </thead>
-      <tbody>
-          {% for trip in trips %}
-          <tr>
-              <td>{{ trip[0] }}</td>
-              <td>{{ trip[1] }}</td>
-              <td>{{ trip[3] }}</td>
-              <td>{{ trip[2] }}</td>
-              <td>{{ trip[4] }}</td>
-              <td>{{ trip[5] }}</td>
-              <td>
-                  <a href="/view/{{ trip[0] }}" class="btn btn-primary">View</a>
-                  <a href="/delete/{{ trip[0] }}" class="btn btn-danger btn">Delete</a>
-              </td>
-          </tr>
-          {% endfor %}
-      </tbody>
+<div class="container mt-5">
+  <table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Start</th>
+            <th>Stop</th>
+            <th>End</th>
+            <th>Distance</th>
+            <th>Duration</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trip in trips %}
+        <tr>
+            <td>{{ trip[0] }}</td>
+            <td>{{ trip[1] }}</td>
+            <td>{{ trip[3] }}</td>
+            <td>{{ trip[2] }}</td>
+            <td>{{ trip[4] }}</td>
+            <td>{{ trip[5] }}</td>
+            <td>
+                <a href="/view/{{ trip[0] }}" class="btn btn-primary">View</a>
+                <a href="/delete/{{ trip[0] }}" class="btn btn-danger">Delete</a>
+                <a href="/packing_list/{{ trip[0] }}" class="btn btn-info">Packing List</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
   </table>
-  </div>
-  <div class="text-center">
-    <a href="/plan" class="btn btn-primary btn-md">Plan a Trip</a>
-  </div>
+</div>
 
-  {% include 'partials/footer.html' %}
+<div class="text-center">
+    <a href="/plan" class="btn btn-primary btn-md">Plan a Trip</a>
+</div>
+
+{% include 'partials/footer.html' %}
+

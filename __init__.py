@@ -45,8 +45,7 @@ def delete_trips(trip_id):
     trips = db.get_trips()
     return render_template('view_database.html', trips=trips)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
 
 @app.route('/about')
 def about():
@@ -72,3 +71,21 @@ def see_stats():
     total_trips = db.get_total_trips()
     flags = db.get_flags()
     return render_template('stat.html', trips=trips, total_distance=total_distance, total_time=total_time, total_trips=total_trips, flags=flags)
+
+@app.route('/packing_list/<int:trip_id>', methods=['GET', 'POST'])
+def packing_list(trip_id):
+    if request.method == 'POST':
+        item = request.form['item']
+        db.add_packing_item(trip_id, item)
+        return redirect(f'/packing_list/{trip_id}')
+    
+    items = db.get_packing_list(trip_id)
+    trip = db.get_trip_by_id(trip_id)
+    return render_template('packing_list.html', trip=trip, items=items)
+
+@app.route('/delete_packing_item/<int:item_id>/<int:trip_id>')
+def delete_packing_item(item_id, trip_id):
+    db.delete_packing_item(item_id)
+    return redirect(f'/packing_list/{trip_id}')
+if __name__ == '__main__':
+    app.run(debug=True)

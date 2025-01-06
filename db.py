@@ -179,6 +179,58 @@ def get_flags():
 
     conn.close()
     return found_states
+# Add a new table to store packing list items
+def create_packing_list_table(conn):
+    """Create a packing list table to store packing items."""
+    try:
+        c = conn.cursor()
+        c.execute("""CREATE TABLE IF NOT EXISTS packing_list (
+                        id INTEGER PRIMARY KEY,
+                        trip_id INTEGER,
+                        item TEXT NOT NULL,
+                        FOREIGN KEY (trip_id) REFERENCES trips(id)
+                    );""")
+        conn.commit()
+    except Error as e:
+        print(e)
+
+# Initialize packing list table
+def init_packing_list_table():
+    conn = create_connection(db_file)
+    if conn:
+        create_packing_list_table(conn)
+        conn.close()
+
+# Add a packing list item for a specific trip
+def add_packing_item(trip_id, item):
+    conn = create_connection(db_file)
+    sql = ''' INSERT INTO packing_list(trip_id, item)
+              VALUES(?,?) '''
+    cur = conn.cursor()
+    cur.execute(sql, (trip_id, item))
+    conn.commit()
+    conn.close()
+
+# Fetch packing list for a trip
+def get_packing_list(trip_id):
+    conn = create_connection(db_file)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM packing_list WHERE trip_id=?", (trip_id,))
+    items = cur.fetchall()
+    conn.close()
+    return items
+
+# Delete a packing list item
+def delete_packing_item(item_id):
+    conn = create_connection(db_file)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM packing_list WHERE id=?", (item_id,))
+    conn.commit()
+    conn.close()
+
+# Call to initialize the packing list table on server startup
+init_packing_list_table()
+
 
 
 conn.close()

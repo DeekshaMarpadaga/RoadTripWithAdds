@@ -1,0 +1,29 @@
+{% include 'partials/header.html' %}
+
+<header class="bg-light text-center py-0 custom-header">
+  <div class="container">
+      <h1 class="mb-0">{{ trip[1] }} to {{ trip[2] }} - Packing List</h1>
+  </div>
+</header>
+
+<div class="container mt-5">
+    <h3>Items to Pack</h3>
+    <ul class="list-group">
+        {% for item in items %}
+            <li class="list-group-item">
+                {{ item[2] }} 
+                <a href="/delete_packing_item/{{ item[0] }}/{{ trip[0] }}" class="btn btn-danger btn-sm float-right">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <form method="POST" class="mt-3">
+        <div class="form-group">
+            <label for="item">Add Packing Item:</label>
+            <input type="text" name="item" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Add Item</button>
+    </form>
+</div>
+
+{% include 'partials/footer.html' %}
