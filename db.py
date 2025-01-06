@@ -34,7 +34,8 @@ if conn is not None:
                                         end TEXT NOT NULL,
                                         stop TEXT NOT NULL,
                                         distance TEXT,
-                                        duration TEXT
+                                        duration TEXT,
+                                        completed INTEGER
                                     ); """
     create_table(conn, create_trips_table_sql)
 else:
@@ -45,10 +46,10 @@ def insert_trip(start, end, distance, duration,stop):
     Insert a new trip into the trips table
     """
     conn = create_connection(db_file)
-    sql = ''' INSERT INTO trips(start, end, distance, duration,stop)
-              VALUES(?,?,?,?,?) '''
+    sql = ''' INSERT INTO trips(start, end, distance, duration,stop,completed)
+              VALUES(?,?,?,?,?,?) '''
     cur = conn.cursor()
-    cur.execute(sql, (start, end, distance, duration,stop))
+    cur.execute(sql, (start, end, distance, duration,stop,0))
     conn.commit()
     conn.close()
     
@@ -120,7 +121,7 @@ def get_trips():
     """
     conn = create_connection(db_file)
     cur = conn.cursor()
-    cur.execute("SELECT * FROM trips")
+    cur.execute("SELECT * FROM trips WHERE completed ==0")
 
     rows = cur.fetchall()
 
@@ -230,6 +231,14 @@ def delete_packing_item(item_id):
 
 # Call to initialize the packing list table on server startup
 init_packing_list_table()
+
+def complete(trip_id):
+    conn = create_connection(db_file)
+    cur = conn.cursor()
+    cur.execute("UPDATE trips SET completed = 1 WHERE id=?", (trip_id,))
+    conn.commit()
+    conn.close()
+
 
 
 
