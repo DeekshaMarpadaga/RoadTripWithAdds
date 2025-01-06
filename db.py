@@ -60,7 +60,7 @@ def get_total_distance():
     """
     conn = create_connection(db_file)
     cur = conn.cursor()
-    cur.execute("SELECT SUM(Distance) FROM trips")
+    cur.execute("SELECT SUM(Distance) FROM trips WHERE completed==1")
     total_distance = cur.fetchone()[0]  # Fetch the result which is the total distance
     conn.close()
     return round(total_distance, 2) if total_distance is not None else 0.0
@@ -71,7 +71,7 @@ def get_total_time():
     """
     conn = create_connection(db_file)
     cur = conn.cursor()
-    cur.execute("SELECT duration FROM trips")
+    cur.execute("SELECT duration FROM trips WHERE completed==1")
     durations = cur.fetchall()
     total_minutes = 0
 
@@ -170,7 +170,7 @@ def get_flags():
 
     conn = create_connection(db_file)
     cur = conn.cursor()
-    cur.execute("SELECT start, stop, end FROM trips")  # Modify to use the actual column names
+    cur.execute("SELECT start, stop, end FROM trips WHERE completed==1 ")  
     rows = cur.fetchall()
 
     for row in rows:
