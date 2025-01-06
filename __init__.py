@@ -14,10 +14,9 @@ def plan_trip():
         # Extract form data
         start = request.form['start']
         end = request.form['end']
-        distance = request.form['distance']  # Assuming you add a way to input this in the form
-        duration = request.form['duration']  # Assuming you add a way to input this in the form
+        distance = request.form['distance']  
+        duration = request.form['duration']  
         stop=request.form['stop']
-        # Assuming db.py has a function called insert_trip that inserts the data into the database
         db.insert_trip(start, end, distance, duration,stop)
         
         # Redirect to another page, maybe to the list of trips
@@ -27,7 +26,6 @@ def plan_trip():
 
 @app.route('/see')
 def see_trips():
-    # Assuming db.py has a function called get_trips that fetches trips from the database
     trips = db.get_trips()
     return render_template('view_database.html', trips=trips)
 
@@ -90,6 +88,14 @@ def complete(trip_id):
     return render_template('view_database.html', trips=trips)
 
 @app.route('/delete_packing_item/<int:item_id>/<int:trip_id>')
+def delete_packing_item(item_id, trip_id):
+    db.delete_packing_item(item_id)
+    return redirect(f'/packing_list/{trip_id}')
+@app.route('/completed_trips')
+def see_completed_trips():
+    trips = db.get_completed_trips()
+    return render_template('view_completed.html', trips=trips)
+
 def delete_packing_item(item_id, trip_id):
     db.delete_packing_item(item_id)
     return redirect(f'/packing_list/{trip_id}')

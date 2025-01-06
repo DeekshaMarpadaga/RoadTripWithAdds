@@ -127,6 +127,20 @@ def get_trips():
 
     conn.close()
     return rows
+
+def get_completed_trips():
+    """
+    Query all rows in the trips table
+    """
+    conn = create_connection(db_file)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM trips WHERE completed ==1")
+
+    rows = cur.fetchall()
+
+    conn.close()
+    return rows
+
 def get_trip_by_id(trip_id):
     """
     Query a trip by its ID

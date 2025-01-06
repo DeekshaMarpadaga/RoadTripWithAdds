@@ -1,0 +1,47 @@
+{% include 'partials/header.html' %}
+
+<header class="bg-light text-center py-0 custom-header">
+  <div class="container">
+      <h1 class="mb-0">Trips Completed</h1>
+  </div>
+</header>
+
+<div class="container mt-5">
+  <table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Start</th>
+            <th>Stop</th>
+            <th>End</th>
+            <th>Distance</th>
+            <th>Duration</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trip in trips %}
+        <tr>
+            <td>{{ trip[0] }}</td>
+            <td>{{ trip[1] }}</td>
+            <td>{{ trip[3] }}</td>
+            <td>{{ trip[2] }}</td>
+            <td>{{ trip[4] }}</td>
+            <td>{{ trip[5] }}</td>
+            <td>
+                <a href="/view/{{ trip[0] }}" class="btn btn-primary">View</a>
+                <a href="/delete/{{ trip[0] }}" class="btn btn-danger">Delete</a>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="text-center">
+    <a href="/plan" class="btn btn-primary btn-md">Plan a Trip</a>
+</div>
+
+{% include 'partials/footer.html' %}
+
