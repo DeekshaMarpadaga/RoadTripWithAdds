@@ -45,7 +45,7 @@
                         </button>
                       </div>
                       <div class="modal-body">
-                        <form action="/complete/{{ trip[0] }}" >
+                        <form action="/complete/{{ trip[0] }}" method="POST" >
                           <div class="form-group">
                             <label for="completion-date">Completion Date</label>
                             <input type="date" class="form-control" id="completion-date" name="completion_date" required>

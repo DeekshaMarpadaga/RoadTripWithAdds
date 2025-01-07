@@ -35,7 +35,8 @@ if conn is not None:
                                         stop TEXT NOT NULL,
                                         distance TEXT,
                                         duration TEXT,
-                                        completed INTEGER
+                                        completed INTEGER,
+                                        date TEXT
                                     ); """
     create_table(conn, create_trips_table_sql)
 else:
@@ -246,10 +247,11 @@ def delete_packing_item(item_id):
 # Call to initialize the packing list table on server startup
 init_packing_list_table()
 
-def complete(trip_id):
+def complete(trip_id,date):
     conn = create_connection(db_file)
     cur = conn.cursor()
     cur.execute("UPDATE trips SET completed = 1 WHERE id=?", (trip_id,))
+    cur.execute("UPDATE trips SET date = ? WHERE id=?", (date,trip_id))
     conn.commit()
     conn.close()
 

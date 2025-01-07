@@ -81,9 +81,10 @@ def packing_list(trip_id):
     trip = db.get_trip_by_id(trip_id)
     return render_template('packing_list.html', trip=trip, items=items)
 
-@app.route('/complete/<int:trip_id>')
+@app.route('/complete/<int:trip_id>', methods=['POST'])
 def complete(trip_id):
-    db.complete(trip_id)
+    date = request.form['completion_date']
+    db.complete(trip_id,date)
     trips = db.get_trips()
     return redirect('/see')
 
