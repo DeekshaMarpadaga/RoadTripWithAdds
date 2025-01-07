@@ -85,7 +85,7 @@ def packing_list(trip_id):
 def complete(trip_id):
     db.complete(trip_id)
     trips = db.get_trips()
-    return render_template('view_database.html', trips=trips)
+    return redirect('/see')
 
 @app.route('/delete_packing_item/<int:item_id>/<int:trip_id>')
 def delete_packing_item(item_id, trip_id):

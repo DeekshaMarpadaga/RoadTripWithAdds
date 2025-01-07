@@ -32,9 +32,30 @@
                 <a href="/view/{{ trip[0] }}" class="btn btn-primary">View</a>
                 <a href="/delete/{{ trip[0] }}" class="btn btn-danger">Delete</a>
                 <a href="/packing_list/{{ trip[0] }}" class="btn btn-info">Packing List</a>
-                <h1>    </h1>
-                <a href="/complete/{{ trip[0] }}" class="btn btn-success">Mark as Complete</a>
+                <a href="javascript:void(0);" class="btn btn-success" data-toggle="modal" data-target="#completeModal{{ trip[0] }}">Mark as Complete</a>
 
+                <!-- Modal for Date Input -->
+                <div class="modal fade" id="completeModal{{ trip[0] }}" tabindex="-1" role="dialog" aria-labelledby="completeModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="completeModalLabel">Mark Trip as Complete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form action="/complete/{{ trip[0] }}" >
+                          <div class="form-group">
+                            <label for="completion-date">Completion Date</label>
+                            <input type="date" class="form-control" id="completion-date" name="completion_date" required>
+                          </div>
+                          <button type="submit" class="btn btn-success">Submit</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </td>
         </tr>
         {% endfor %}
@@ -47,4 +68,3 @@
 </div>
 
 {% include 'partials/footer.html' %}
-
