@@ -1,5 +1,5 @@
 #__init__.py
-from flask import Flask, request, redirect, render_template, url_for
+from flask import Flask, request, redirect, render_template, url_for, jsonify
 import db  # Ensure this imports your db.py functionality for database interaction
 
 app = Flask(__name__, static_url_path='/public', static_folder='public')
@@ -97,8 +97,26 @@ def see_completed_trips():
     trips = db.get_completed_trips()
     return render_template('view_completed.html', trips=trips)
 
-def delete_packing_item(item_id, trip_id):
-    db.delete_packing_item(item_id)
-    return redirect(f'/packing_list/{trip_id}')
+@app.route('/api/stats', methods=['GET'])
+def get_stats():
+    # Fetch the statistics
+    total_distance = db.get_total_distance()
+    total_time = db.get_total_time()
+    total_trips = db.get_total_trips()
+    
+    stats = {
+        "total_distance": total_distance,
+        "total_time": total_time,
+        "total_trips": total_trips
+    }
+    
+    return jsonify(stats)
+
+@app.route('/api/trip_data', methods=['GET'])
+def get_trip_data():
+    trip_data=db.month_miles()
+    return jsonify(trip_data)
+
+
 if __name__ == '__main__':
     app.run(debug=True)

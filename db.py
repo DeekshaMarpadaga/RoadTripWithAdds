@@ -254,6 +254,27 @@ def complete(trip_id,date):
     cur.execute("UPDATE trips SET date = ? WHERE id=?", (date,trip_id))
     conn.commit()
     conn.close()
+def month_miles():
+    # Get trips and calculate distance traveled per month
+    conn = create_connection(db_file)
+    cur = conn.cursor()
+    
+    # SQL query to group trips by year and month and sum the distance
+    cur.execute("""
+        SELECT strftime('%Y-%m', date) AS month, SUM(CAST(distance AS REAL)) AS total_distance
+        FROM trips
+        WHERE completed = 1
+        GROUP BY month
+        ORDER BY month
+    """)
+    
+    trip_data = cur.fetchall()
+    
+    # Format the data into a list of dictionaries
+    trip_data = [{"month": month, "total_distance": total_distance} for month, total_distance in trip_data]
+    
+    conn.close()
+    return trip_data
 
 
 
