@@ -1,13 +1,28 @@
 library(shiny)
+library(shinydashboard)
 library(httr)
 library(dplyr)
 library(ggplot2)
 library(plotly)
 library(lubridate)
+library(leaflet)
+library(shinyjs)  # Required for JavaScript functionality
 
 # Function to fetch stats from the Flask API
 get_stats_data <- function() {
   response <- GET("http://127.0.0.1:5000/api/stats")
+  content(response, "parsed")
+}
+
+# Function to fetch trip data for plotting
+get_trip_data <- function() {
+  response <- GET("http://127.0.0.1:5000/api/trip_data")
+  content(response, "parsed")
+}
+
+# Function to fetch location data for mapping
+get_location_data <- function() {
+  response <- GET("http://127.0.0.1:5000/api/locations")
   content(response, "parsed")
 }
 
@@ -16,6 +31,11 @@ ui <- dashboardPage(
   dashboardHeader(title = "Trip Statistics"),
   dashboardSidebar(),
   dashboardBody(
+    useShinyjs(),  # Initialize shinyjs
+    fluidRow(
+      # Back to Index Button
+      actionButton("back_btn", "Home", class = "btn btn-primary")
+    ),
     fluidRow(
       valueBoxOutput("totalTrips"),
       valueBoxOutput("totalDistance"),
@@ -24,12 +44,18 @@ ui <- dashboardPage(
     fluidRow(
       box(title = "Trips Overview", status = "primary", solidHeader = TRUE, width = 12,
           plotlyOutput("tripPlot"))
+    ),
+    fluidRow(
+      box(title = "Locations", status = "primary", solidHeader = TRUE, width = 12,
+          leafletOutput("locationMap", height = 400))
     )
+    
   )
 )
 
 # Server Logic
-server <- function(input, output) {
+server <- function(input, output, session) {
+  
   # Fetch stats data from Flask API
   stats <- reactive({
     get_stats_data()
@@ -37,9 +63,12 @@ server <- function(input, output) {
   
   # Fetch trip data for plotting
   trip_data <- reactive({
-    response <- GET("http://127.0.0.1:5000/api/trip_data")
-    trip_content <- content(response, "parsed")  # Parse the JSON content into a list or data frame
-    return(trip_content)  # Return the parsed trip data
+    get_trip_data()
+  })
+  
+  # Fetch location data for mapping
+  location_data <- reactive({
+    get_location_data()
   })
   
   # Display statistics in value boxes
@@ -70,7 +99,7 @@ server <- function(input, output) {
     )
   })
   
-  
+  # Plotting Trip Data
   output$tripPlot <- renderPlotly({
     # Fetch trip data
     trips <- trip_data()
@@ -120,6 +149,38 @@ server <- function(input, output) {
     ggplotly(plot)
   })
   
+  # Modify the render function for location map
+  output$locationMap <- renderLeaflet({
+    # Fetch location data
+    locations <- location_data()
+    
+    # Flatten the list of locations and keep only non-empty addresses
+    addresses <- unlist(lapply(locations, function(location) {
+      valid_addresses <- location[location != ""]
+      return(valid_addresses)
+    }))
+    
+    # Geocode the addresses to get latitude and longitude
+    address_df <- data.frame(address = addresses)
+    location_df <- geocode(address_df, address = "address")
+    
+    # Filter out invalid locations
+    location_df <- location_df %>%
+      filter(!is.na(lat) & !is.na(long))
+    
+    # Create the map
+    leaflet(location_df) %>%
+      addProviderTiles(providers$OpenStreetMap) %>%
+      addMarkers(lng = ~long, lat = ~lat, popup = ~address)
+  })
+  
+  # Add functionality for the "Back to Index" button
+  observeEvent(input$back_btn, {
+    runjs('window.location.href = "http://127.0.0.1:5000/";')  # Redirect to Flask index
+  })
 }
+
 # Run the app
 shinyApp(ui = ui, server = server)
+
+

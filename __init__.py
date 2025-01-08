@@ -116,6 +116,10 @@ def get_stats():
 def get_trip_data():
     trip_data=db.month_miles()
     return jsonify(trip_data)
+@app.route('/api/locations', methods=['GET'])
+def get_locations_data():
+    locations=db.locations()
+    return jsonify(locations)
 
 
 if __name__ == '__main__':

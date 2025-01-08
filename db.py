@@ -275,7 +275,21 @@ def month_miles():
     
     conn.close()
     return trip_data
-
+def locations():
+    # Get trips and calculate distance traveled per month
+    conn = create_connection(db_file)
+    cur = conn.cursor()
+    
+    # SQL query to group trips by year and month and sum the distance
+    cur.execute("""
+        SELECT start, stop, end 
+        FROM trips 
+        WHERE completed==1
+    """)
+    
+    locations = cur.fetchall()
+    conn.close()
+    return locations
 
 
 
