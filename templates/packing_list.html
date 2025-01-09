@@ -1,5 +1,14 @@
 {% include 'partials/header.html' %}
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ trip[1] }} to {{ trip[2] }} - Packing List</title>
+</head>
+<body>
+
 <header class="bg-light text-center py-0 custom-header">
   <div class="container">
       <h1 class="mb-0">{{ trip[1] }} to {{ trip[2] }} - Packing List</h1>
@@ -15,22 +24,63 @@
         </div>
         <button type="submit" class="btn btn-success">Add Item</button>
     </form>
+    
     <h3>  </h3>
     
     <ul class="list-group">
         {% for item in items %}
-
             <li class="list-group-item">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" checked>
+                    <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="check{{ item[0] }}" 
+                        data-item-id="{{ item[0] }}"
+                        {% if item[3] == 1 %}checked{% endif %}
+                    >
                     <label class="form-check-label">{{ item[2] }} </label>
-                  </div>
+                </div>
                 <a href="/delete_packing_item/{{ item[0] }}/{{ trip[0] }}" class="btn btn-danger btn-sm float-right">Delete</a>
             </li>
         {% endfor %}
     </ul>
 
-
 </div>
 
 {% include 'partials/footer.html' %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add event listener to each checkbox
+        document.querySelectorAll('.form-check-input').forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                const itemId = this.getAttribute('data-item-id');  // Get the item's ID
+                const isChecked = this.checked;  // Get whether the checkbox is checked (true/false)
+                
+                // Send the updated checkbox state to the Flask backend
+                fetch(`/update_item_status/${itemId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ checked: isChecked })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Optionally handle the response (e.g., log it or show a success message)
+                    if (data.success) {
+                        console.log(`Item ${itemId} updated to ${isChecked ? 'checked' : 'unchecked'}`);
+                    } else {
+                        console.log('Failed to update item status.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating item:', error);
+                });
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

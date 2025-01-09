@@ -204,6 +204,7 @@ def create_packing_list_table(conn):
                         id INTEGER PRIMARY KEY,
                         trip_id INTEGER,
                         item TEXT NOT NULL,
+                        checked INTEGER,
                         FOREIGN KEY (trip_id) REFERENCES trips(id)
                     );""")
         conn.commit()
@@ -216,16 +217,34 @@ def init_packing_list_table():
     if conn:
         create_packing_list_table(conn)
         conn.close()
+init_packing_list_table()
 
 # Add a packing list item for a specific trip
 def add_packing_item(trip_id, item):
     conn = create_connection(db_file)
-    sql = ''' INSERT INTO packing_list(trip_id, item)
-              VALUES(?,?) '''
+    sql = ''' INSERT INTO packing_list(trip_id, item,checked)
+              VALUES(?,?,?) '''
     cur = conn.cursor()
-    cur.execute(sql, (trip_id, item))
+    cur.execute(sql, (trip_id, item,0))
     conn.commit()
     conn.close()
+def check(item_id):
+    conn = create_connection(db_file)
+    cur = conn.cursor()
+    cur.execute("UPDATE packing_list SET checked = 1 WHERE id=?", (item_id,))
+    conn.commit()
+    conn.close()
+
+def uncheck(item_id):
+    conn = create_connection(db_file)
+    cur = conn.cursor()
+    cur.execute("UPDATE packing_list SET checked = 0 WHERE id=?", (item_id,))
+    conn.commit()
+    conn.close()
+
+
+
+
 
 # Fetch packing list for a trip
 def get_packing_list(trip_id):
