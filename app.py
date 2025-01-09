@@ -1,4 +1,4 @@
-#__init__.py
+#appy.py
 from flask import Flask, request, redirect, render_template, url_for, jsonify
 import db  # Ensure this imports your db.py functionality for database interaction
 

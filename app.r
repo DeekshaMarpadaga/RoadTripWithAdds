@@ -6,7 +6,8 @@ library(ggplot2)
 library(plotly)
 library(lubridate)
 library(leaflet)
-library(shinyjs)  # Required for JavaScript functionality
+library(shinyjs)
+library(tidygeocoder)
 
 # Function to fetch stats from the Flask API
 get_stats_data <- function() {
